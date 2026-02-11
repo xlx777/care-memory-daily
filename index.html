@@ -33,7 +33,7 @@
     <h1>CARE-Memory 每日网页日报</h1>
     <p class="muted">自动更新 · 最新时间：<span id="updatedAt">-</span></p>
     <div class="kpi">
-      <span class="pill">前端版本：2026-02-11.1426</span>
+      <span class="pill">前端版本：2026-02-11.2230</span>
       <span class="pill">paper长度：<span id="paperLen">-</span></span>
       <span class="pill">paper源：<span id="paperSource">-</span></span>
       <span class="pill">x源：<span id="xSource">-</span></span>
@@ -77,46 +77,58 @@
     </div>
   </div>
 <script>
-function renderSections(containerId, text, titleRegex) {
-  const c = document.getElementById(containerId);
-  if (!text || !text.trim()) { c.textContent = '暂无内容'; return; }
-  const parts = text.split(titleRegex).filter(Boolean);
-  if (parts.length <= 1) {
-    c.innerHTML = `<pre>${text}</pre>`;
-    return;
-  }
-  c.innerHTML = '';
-  for (const block of parts) {
-    const lines = block.trim().split('\n');
-    const title = lines[0].slice(0, 80);
-    const body = lines.slice(1).join('\n') || '(空)';
-    const d = document.createElement('details');
-    d.innerHTML = `<summary>${title}</summary><pre>${body}</pre>`;
-    c.appendChild(d);
-  }
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
+function renderSimple(containerId, text) {
+  const c = document.getElementById(containerId);
+  if (!text || !String(text).trim()) {
+    c.textContent = '暂无内容';
+    return;
+  }
+  c.innerHTML = '<pre>' + escapeHtml(String(text)) + '</pre>';
+}
+
+window.onerror = function (msg) {
+  var t = '前端脚本错误：' + msg;
+  document.getElementById('paperSections').textContent = t;
+  document.getElementById('xSections').textContent = t;
+};
+
 fetch('./data/latest.json?t=' + Date.now(), { cache: 'no-store' })
-  .then(r=>r.json())
-  .then(d=>{
-    const paper = d.paper_report || '';
-    const xhot = d.x_report || '';
+  .then(function (r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.text();
+  })
+  .then(function (raw) {
+    var d;
+    try { d = JSON.parse(raw); } catch (e) {
+      throw new Error('JSON解析失败: ' + e.message);
+    }
+
+    var paper = d.paper_report || '';
+    var xhot = d.x_report || '';
     document.getElementById('updatedAt').textContent = d.updated_at || '-';
-    document.getElementById('paperLen').textContent = paper.length;
+    document.getElementById('paperLen').textContent = String(paper).length;
     document.getElementById('paperSource').textContent = d.paper_source || 'unknown';
     document.getElementById('xSource').textContent = d.x_source || 'unknown';
 
-    renderSections('paperSections', paper, /\n(?=\d(?:\.\d)?\)\s|\n(?=##\s))/g);
-    renderSections('xSections', xhot, /\n(?=\d\)\s|\n(?=[AB]\)\s|\n(?=##\s))/g);
+    renderSimple('paperSections', paper);
+    renderSimple('xSections', xhot);
 
     document.getElementById('paperRaw').textContent = paper || '暂无';
     document.getElementById('xRaw').textContent = xhot || '暂无';
   })
-  .catch(e=>{
-    document.getElementById('paperSections').textContent='加载失败';
-    document.getElementById('xSections').textContent=String(e);
-    document.getElementById('paperRaw').textContent='加载失败';
-    document.getElementById('xRaw').textContent=String(e);
+  .catch(function (e) {
+    var err = '加载失败：' + String(e && e.message ? e.message : e);
+    document.getElementById('paperSections').textContent = err;
+    document.getElementById('xSections').textContent = err;
+    document.getElementById('paperRaw').textContent = err;
+    document.getElementById('xRaw').textContent = err;
   });
 </script>
 </body>
