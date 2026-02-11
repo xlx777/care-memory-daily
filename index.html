@@ -5,48 +5,119 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CARE-Memory 日报</title>
   <style>
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1020;color:#e6ebff;margin:0}
-    .wrap{max-width:980px;margin:32px auto;padding:0 16px}
-    .card{background:#121935;border:1px solid #29325f;border-radius:14px;padding:20px;margin-bottom:16px}
-    h1{font-size:30px;margin:0 0 10px}
-    h2{font-size:20px;margin:0 0 8px}
-    .muted{color:#98a4d6;font-size:14px}
-    pre{white-space:pre-wrap;line-height:1.55;background:#0e1530;border-radius:10px;padding:14px;border:1px solid #24305f}
-    a{color:#8cc4ff}
+    :root{--bg:#0b1020;--panel:#121935;--soft:#0e1530;--line:#29325f;--line2:#24305f;--txt:#e6ebff;--muted:#98a4d6;--link:#8cc4ff}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);margin:0}
+    .wrap{max-width:980px;margin:24px auto;padding:0 14px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+    h1{font-size:28px;margin:0 0 8px}
+    h2{font-size:19px;margin:0 0 8px}
+    .muted{color:var(--muted);font-size:13px;line-height:1.5}
+    a{color:var(--link)}
+    pre{white-space:pre-wrap;line-height:1.55;background:var(--soft);border-radius:10px;padding:12px;border:1px solid var(--line2);margin:8px 0 0}
+    .toc{display:flex;gap:8px;flex-wrap:wrap}
+    .toc a{font-size:12px;text-decoration:none;background:#16204a;border:1px solid #2a3b7a;padding:6px 10px;border-radius:999px}
+    details{background:var(--soft);border:1px solid var(--line2);border-radius:10px;margin:8px 0;padding:6px 10px}
+    summary{cursor:pointer;font-weight:600}
+    .kpi{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+    .pill{font-size:12px;background:#16204a;border:1px solid #2a3b7a;border-radius:999px;padding:4px 10px;color:#b7c7ff}
+    @media (max-width:640px){
+      h1{font-size:23px}
+      .wrap{padding:0 10px}
+      .card{padding:12px}
+      pre{font-size:13px}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>CARE-Memory 每日网页日报</h1>
     <p class="muted">自动更新 · 最新时间：<span id="updatedAt">-</span></p>
-    <p class="muted">前端版本：2026-02-11.1423 · paper长度：<span id="paperLen">-</span> · 数据源：<span id="paperSource">-</span></p>
-
-    <div class="card">
-      <h2>论文精读日报（结构化）</h2>
-      <pre id="paper">加载中...</pre>
+    <div class="kpi">
+      <span class="pill">前端版本：2026-02-11.1426</span>
+      <span class="pill">paper长度：<span id="paperLen">-</span></span>
+      <span class="pill">paper源：<span id="paperSource">-</span></span>
+      <span class="pill">x源：<span id="xSource">-</span></span>
     </div>
 
-    <div class="card">
-      <h2>X 热点日报（文本）</h2>
-      <pre id="xhot">加载中...</pre>
+    <div class="card" id="tocCard">
+      <h2>快速导航</h2>
+      <div class="toc">
+        <a href="#paperCard">论文日报</a>
+        <a href="#xCard">X 热点</a>
+        <a href="#rawCard">原始全文</a>
+      </div>
+    </div>
+
+    <div class="card" id="paperCard">
+      <h2>论文精读日报（分段折叠）</h2>
+      <div id="paperSections">加载中...</div>
+    </div>
+
+    <div class="card" id="xCard">
+      <h2>X 热点日报（分段折叠）</h2>
+      <div id="xSections">加载中...</div>
+    </div>
+
+    <div class="card" id="rawCard">
+      <h2>原始全文（兜底）</h2>
+      <details>
+        <summary>展开论文原文</summary>
+        <pre id="paperRaw">加载中...</pre>
+      </details>
+      <details>
+        <summary>展开X热点原文</summary>
+        <pre id="xRaw">加载中...</pre>
+      </details>
     </div>
 
     <div class="card">
       <h2>项目链接</h2>
       <p><a href="https://github.com/xlx777/care-memory" target="_blank">care-memory 仓库</a></p>
+      <p><a href="https://github.com/xlx777/care-memory-daily" target="_blank">care-memory-daily 网页仓库</a></p>
     </div>
   </div>
 <script>
-fetch('./data/latest.json?t=' + Date.now(), { cache: 'no-store' }).then(r=>r.json()).then(d=>{
-  document.getElementById('updatedAt').textContent=d.updated_at||'-';
-  document.getElementById('paper').textContent=d.paper_report||'暂无';
-  document.getElementById('xhot').textContent=d.x_report||'暂无';
-  document.getElementById('paperLen').textContent=(d.paper_report||'').length;
-  document.getElementById('paperSource').textContent=d.paper_source||'unknown';
-}).catch(e=>{
-  document.getElementById('paper').textContent='加载失败';
-  document.getElementById('xhot').textContent=String(e);
-});
+function renderSections(containerId, text, titleRegex) {
+  const c = document.getElementById(containerId);
+  if (!text || !text.trim()) { c.textContent = '暂无内容'; return; }
+  const parts = text.split(titleRegex).filter(Boolean);
+  if (parts.length <= 1) {
+    c.innerHTML = `<pre>${text}</pre>`;
+    return;
+  }
+  c.innerHTML = '';
+  for (const block of parts) {
+    const lines = block.trim().split('\n');
+    const title = lines[0].slice(0, 80);
+    const body = lines.slice(1).join('\n') || '(空)';
+    const d = document.createElement('details');
+    d.innerHTML = `<summary>${title}</summary><pre>${body}</pre>`;
+    c.appendChild(d);
+  }
+}
+
+fetch('./data/latest.json?t=' + Date.now(), { cache: 'no-store' })
+  .then(r=>r.json())
+  .then(d=>{
+    const paper = d.paper_report || '';
+    const xhot = d.x_report || '';
+    document.getElementById('updatedAt').textContent = d.updated_at || '-';
+    document.getElementById('paperLen').textContent = paper.length;
+    document.getElementById('paperSource').textContent = d.paper_source || 'unknown';
+    document.getElementById('xSource').textContent = d.x_source || 'unknown';
+
+    renderSections('paperSections', paper, /\n(?=\d(?:\.\d)?\)\s|\n(?=##\s))/g);
+    renderSections('xSections', xhot, /\n(?=\d\)\s|\n(?=[AB]\)\s|\n(?=##\s))/g);
+
+    document.getElementById('paperRaw').textContent = paper || '暂无';
+    document.getElementById('xRaw').textContent = xhot || '暂无';
+  })
+  .catch(e=>{
+    document.getElementById('paperSections').textContent='加载失败';
+    document.getElementById('xSections').textContent=String(e);
+    document.getElementById('paperRaw').textContent='加载失败';
+    document.getElementById('xRaw').textContent=String(e);
+  });
 </script>
 </body>
 </html>
