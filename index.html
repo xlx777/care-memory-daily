@@ -1,135 +1,262 @@
 <!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CARE-Memory 日报</title>
-  <style>
-    :root{--bg:#0b1020;--panel:#121935;--soft:#0e1530;--line:#29325f;--line2:#24305f;--txt:#e6ebff;--muted:#98a4d6;--link:#8cc4ff}
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);margin:0}
-    .wrap{max-width:980px;margin:24px auto;padding:0 14px}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
-    h1{font-size:28px;margin:0 0 8px}
-    h2{font-size:19px;margin:0 0 8px}
-    .muted{color:var(--muted);font-size:13px;line-height:1.5}
-    a{color:var(--link)}
-    pre{white-space:pre-wrap;line-height:1.55;background:var(--soft);border-radius:10px;padding:12px;border:1px solid var(--line2);margin:8px 0 0}
-    .toc{display:flex;gap:8px;flex-wrap:wrap}
-    .toc a{font-size:12px;text-decoration:none;background:#16204a;border:1px solid #2a3b7a;padding:6px 10px;border-radius:999px}
-    details{background:var(--soft);border:1px solid var(--line2);border-radius:10px;margin:8px 0;padding:6px 10px}
-    summary{cursor:pointer;font-weight:600}
-    .kpi{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-    .pill{font-size:12px;background:#16204a;border:1px solid #2a3b7a;border-radius:999px;padding:4px 10px;color:#b7c7ff}
-    @media (max-width:640px){
-      h1{font-size:23px}
-      .wrap{padding:0 10px}
-      .card{padding:12px}
-      pre{font-size:13px}
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>CARE-Memory 每日网页日报</h1>
-    <p class="muted">自动更新 · 最新时间：<span id="updatedAt">-</span></p>
-    <div class="kpi">
-      <span class="pill">前端版本：2026-02-11.2230</span>
-      <span class="pill">paper长度：<span id="paperLen">-</span></span>
-      <span class="pill">paper源：<span id="paperSource">-</span></span>
-      <span class="pill">x源：<span id="xSource">-</span></span>
-    </div>
+<html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CARE-Memory 日报</title>
+<style>body{font-family:Inter,system-ui;background:#0b1020;color:#e6ebff;margin:0}.w{max-width:980px;margin:24px auto;padding:0 14px}.c{background:#121935;border:1px solid #29325f;border-radius:14px;padding:16px;margin-bottom:12px}pre{white-space:pre-wrap;line-height:1.55;background:#0e1530;border-radius:10px;padding:12px;border:1px solid #24305f}.m{color:#98a4d6;font-size:13px}</style>
+</head><body><div class="w">
+<div class="c"><h1>CARE-Memory 每日网页日报</h1><div class="m">自动更新：2026-02-11 14:25 UTC ｜ paper源：file ｜ x源：file ｜ 前端版本：2026-02-11.2234</div></div>
+<div class="c"><h2>论文精读日报</h2><pre># 四论文联合研读日报（2026-02-11）
 
-    <div class="card" id="tocCard">
-      <h2>快速导航</h2>
-      <div class="toc">
-        <a href="#paperCard">论文日报</a>
-        <a href="#xCard">X 热点</a>
-        <a href="#rawCard">原始全文</a>
-      </div>
-    </div>
+## 1) Top conclusion + confidence + trace_id + auto deep-read list
 
-    <div class="card" id="paperCard">
-      <h2>论文精读日报（分段折叠）</h2>
-      <div id="paperSections">加载中...</div>
-    </div>
+**Top Conclusion（总判断）**
+- 四篇工作在同一主线达成一致：**“长程个性化智能体的瓶颈不再是是否能检索到相关文本，而是能否在长时间轴上保持证据保真、状态连续建模与高阶推理（时间/心理/情感）”**。  
+- `KnowMe-Bench` 与 `CloneMem` 更偏**评测侧**，共同指出“仅靠语义检索/摘要式记忆会在时间逻辑、动机归因、未决状态建模上失真”；`O-Mem` 偏**系统侧**，给出“分层记忆 + 动态画像”的工程折中；`LongEmotion` 把问题扩展到**情感智能**并验证了“协作式框架（CoEM）可缓解部分长上下文情感推理退化”。
 
-    <div class="card" id="xCard">
-      <h2>X 热点日报（分段折叠）</h2>
-      <div id="xSections">加载中...</div>
-    </div>
+**Confidence**
+- **0.82（中高）**：结论由四文共同指向，且有可复述的定量结果支撑；但部分结果为作者自报，且跨论文评测协议并不统一。
 
-    <div class="card" id="rawCard">
-      <h2>原始全文（兜底）</h2>
-      <details>
-        <summary>展开论文原文</summary>
-        <pre id="paperRaw">加载中...</pre>
-      </details>
-      <details>
-        <summary>展开X热点原文</summary>
-        <pre id="xRaw">加载中...</pre>
-      </details>
-    </div>
+**trace_id**
+- `fpjr-2026-02-11-1417UTC-4pdf-memory-ei-v1`
 
-    <div class="card">
-      <h2>项目链接</h2>
-      <p><a href="https://github.com/xlx777/care-memory" target="_blank">care-memory 仓库</a></p>
-      <p><a href="https://github.com/xlx777/care-memory-daily" target="_blank">care-memory-daily 网页仓库</a></p>
-    </div>
-  </div>
-<script>
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
+**Auto deep-read list（自动建议二次精读）**
+1. **CloneMem（优先级 P0）**：其“validity–fidelity trade-off（语义有效性 vs. 证据保真）”与“未决状态（not specified）”问题定义最适合作为下一轮方法设计锚点。  
+2. **KnowMe-Bench（P0）**：三层任务设计（事实-时间逻辑-洞察）可直接作为后续统一评测骨架。  
+3. **O-Mem（P1）**：工程效率优势明显，适合作为可落地 baseline/系统原型。  
+4. **LongEmotion（P1）**：若产品场景含心理陪伴/长期对话，需精读其任务分解与 CoEM 细节。
 
-function renderSimple(containerId, text) {
-  const c = document.getElementById(containerId);
-  if (!text || !String(text).trim()) {
-    c.textContent = '暂无内容';
-    return;
-  }
-  c.innerHTML = '<pre>' + escapeHtml(String(text)) + '</pre>';
-}
+---
 
-window.onerror = function (msg) {
-  var t = '前端脚本错误：' + msg;
-  document.getElementById('paperSections').textContent = t;
-  document.getElementById('xSections').textContent = t;
-};
+## 2) Per-paper debate-style summary（每篇：共识 / 分歧 / 裁决）
 
-fetch('./data/latest.json?t=' + Date.now(), { cache: 'no-store' })
-  .then(function (r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.text();
-  })
-  .then(function (raw) {
-    var d;
-    try { d = JSON.parse(raw); } catch (e) {
-      throw new Error('JSON解析失败: ' + e.message);
-    }
+### 2.1 KnowMe-Bench
 
-    var paper = d.paper_report || '';
-    var xhot = d.x_report || '';
-    document.getElementById('updatedAt').textContent = d.updated_at || '-';
-    document.getElementById('paperLen').textContent = String(paper).length;
-    document.getElementById('paperSource').textContent = d.paper_source || 'unknown';
-    document.getElementById('xSource').textContent = d.x_source || 'unknown';
+**共识（论文内可成立）**
+- 该文明确指出既有长程记忆基准多用“对话历史/合成轨迹”，导致“检索好 ≠ 理解人”。并提出来自长篇自传叙事的公开基准，强调“证据链接问题 + 三层能力评测”。
+- 关键证据：
+  - “retrieval performance an imperfect proxy for person understanding”【KnowMe Abstract】
+  - 数据规模与结构：4.7M tokens、2580条评测实例、三类叙事集（Knausgård/Ferrante/Proust）【KnowMe §5.1】。
 
-    renderSimple('paperSections', paper);
-    renderSimple('xSections', xhot);
+**分歧（与其他论文/实践张力）**
+- 它强调高阶“洞察”任务的重要性，但当前最强配置在此层仍明显偏低；例如文中写到即便强模型+最佳记忆机制，Level III仍“capped at 22.3%（Dataset2, MemOS+GPT）”【KnowMe §5.2】。
+- 这与工程侧（如 O-Mem）追求可部署性能的优先级存在冲突：产品常先优化事实准确与延迟，而非心理动力学层面的可解释推理。
 
-    document.getElementById('paperRaw').textContent = paper || '暂无';
-    document.getElementById('xRaw').textContent = xhot || '暂无';
-  })
-  .catch(function (e) {
-    var err = '加载失败：' + String(e && e.message ? e.message : e);
-    document.getElementById('paperSections').textContent = err;
-    document.getElementById('xSections').textContent = err;
-    document.getElementById('paperRaw').textContent = err;
-    document.getElementById('xRaw').textContent = err;
-  });
-</script>
-</body>
-</html>
+**裁决（基于事实）**
+- KnowMe-Bench 对“评什么”给出高价值校准：**应把时间逻辑与洞察能力从事实检索中拆开独立计量**。短期内可接受事实层先提升，但研发路线不能只盯检索召回。
+
+---
+
+### 2.2 CloneMem
+
+**共识（论文内可成立）**
+- 该文把 AI Clone 场景从对话记忆扩展到“非对话数字痕迹”（日记/社媒/邮件），并强调长期人格轨迹建模。
+- 关键证据：
+  - 数据与长度：10 persona、1183题（表2）且文本称约5000 QA、7/10 persona 上下文&gt;500k tokens（部分到1M）【CloneMem §4.1, Table2】。
+  - 结论性发现：最简单 `Flat` 检索在非 Oracle 条件下常优于抽象化记忆（A-Mem/Mem0），暴露“压缩损失”问题【CloneMem §6/§7】。
+
+**分歧（与常见“结构化记忆更好”认知）**
+- 论文显示更强语义召回并不必然转化为更高问答正确率：例如嵌入更强时 recall 提升，但 choice accuracy 不稳定甚至下降（LLaMA设置下可见）【CloneMem Table5】。
+- 文中还指出模型在证据不足时倾向“叙事补全”，即给出情绪上合理但因果错误的答案【CloneMem §7】。
+
+**裁决（基于事实）**
+- CloneMem 的核心贡献是把“**证据保真**”从系统实现细节提升为一等评测目标。对我们的启示：**先保存原始轨迹可追溯性，再谈压缩与抽象**。
+
+---
+
+### 2.3 O-Mem
+
+**共识（论文内可成立）**
+- O-Mem主张“动态用户画像 + 分层检索”以平衡性能与效率。
+- 关键量化结果：
+  - LoCoMo：**51.67% F1**（GPT-4.1），文中称较LangMem近3%提升【O-Mem Abstract/§5】；
+  - PERSONAMEM：**62.99%**，较A-Mem提升3.57%【O-Mem Abstract/§5】；
+  - Deep Research Bench：平均对齐 **44.49%** vs Mem0 **36.43%**【O-Mem Table4】；
+  - 与 Direct RAG：F1 51.67 vs 50.25，但 token 1.5K vs 2.6K、延迟2.36s vs 4.01s、峰值显存22.99MB vs 33.16MB【O-Mem Table5】。
+
+**分歧（与评测侧论文的张力）**
+- O-Mem强调“高性价比可部署”，而 CloneMem/KnowMe 更强调“轨迹保真与高阶推理”；二者目标函数不同。
+- O-Mem同文也承认抽象化可能丢失细粒度上下文，甚至提出“是否真的需要复杂记忆系统”的反思【O-Mem §5】。
+
+**裁决（基于事实）**
+- O-Mem在工程指标上具明显优势，适合作为生产基线；但若目标是“人格演化可解释 + 高阶洞察”，仍需与证据保真机制联用，而非单独依赖压缩记忆。
+
+---
+
+### 2.4 LongEmotion
+
+**共识（论文内可成立）**
+- 该文指出情感智能应在长上下文持续处理中评估，而非短样本单点判断。
+- 关键证据：
+  - 数据平均上下文长度 **15,341 tokens**，覆盖六类任务（情绪识别、知识应用、共情生成）【LongEmotion Abstract/Table1】；
+  - CoEM 相对 Base 在多数模型有增益：如 Qwen3-8B Overall **+4.28**，DeepSeek-V3 **+3.28**【LongEmotion Table2】。
+
+**分歧（与“RAG必然增益”假设）**
+- 文中显示 Vanilla RAG 对小模型可能无益甚至负增益（如 Qwen3-8B Overall 下降）【LongEmotion Table2】；Search-o1 在小模型上也出现性能下降【LongEmotion §5.2/Table3】。
+
+**裁决（基于事实）**
+- 情感任务中的长上下文增强并非“检索越多越好”，而是“**检索质量 + 协作推理编排**”共同决定上限。CoEM提供了可复用范式，但跨语种/多模态泛化仍待验证（论文 limitations 已说明）。
+
+---
+
+## 3.1 Common issues（跨论文共性问题，&gt;=3）
+
+1. **检索代理指标与真实能力错位**  
+   - 多文共同显示：召回率/语义相关性提升，不等价于时间因果与心理状态建模能力提升（KnowMe、CloneMem、LongEmotion均有证据）。
+
+2. **记忆压缩导致证据链断裂（lossy compression）**  
+   - CloneMem与O-Mem均直接讨论抽象化带来的细节丢失；这会伤害“何时/为何变化”的可追溯判断。
+
+3. **证据不足时的“叙事补全”与幻觉风险**  
+   - CloneMem明确指出模型偏好高概率故事模板而非谨慎弃答；KnowMe也显示复杂洞察任务低上限。
+
+4. **评测协议不统一，跨论文横向比较成本高**  
+   - 数据源、指标、模型设置差异大（F1/Accuracy/Alignment/LLM Judge混用），难形成统一SOTA解释。
+
+5. **高阶能力（洞察/情感一致性）仍是主要瓶颈**  
+   - KnowMe Level III低分、LongEmotion在部分模型上RAG失效，说明“理解人”远未被解决。
+
+---
+
+## 3.2 Innovation directions（&gt;=3；每项含研究假设 + 验证路径）
+
+### 方向A：证据保真优先的“双轨记忆”（Raw Trace + Abstract Memory）
+- **研究假设**：若系统在检索时同时返回“抽象摘要 + 原始证据片段（含时间戳/来源）”，则可在不显著牺牲效率的前提下提升时间逻辑与因果归因正确率。
+- **验证路径**：
+  - **Dataset**：CloneMem、KnowMe-Bench（优先非线性叙事子集）。
+  - **Metric**：Choice Accuracy / QA Consistency（CloneMem）；T3-T7（KnowMe）。
+  - **Ablation**：
+    1) 仅抽象记忆；2) 仅原始轨迹；3) 双轨融合（不同融合权重/检索深度k）。
+
+### 方向B：显式“未决状态（Not-Specified）”建模与弃答机制
+- **研究假设**：引入“状态未定”标签与证据阈值门控，可显著降低长程个性化问答中的叙事型幻觉。
+- **验证路径**：
+  - **Dataset**：CloneMem（其任务已包含unanswerable/未决场景），可外加KnowMe对抗题。
+  - **Metric**：拒答精确率/召回率、Hallucination rate、T2冲突检测表现。
+  - **Ablation**：
+    1) 无门控强制回答；2) 静态阈值门控；3) 动态不确定性门控（按问题类型/时间跨度）。
+
+### 方向C：时间-心理联合图（Temporal-Psychodynamic Graph）
+- **研究假设**：将事件节点与“信念/偏好更新节点”共同建模，比仅事件流更能提升“为何改变”类问题正确率。
+- **验证路径**：
+  - **Dataset**：KnowMe Dataset3（心理深度）+ CloneMem opinion/emotion trajectory 子任务。
+  - **Metric**：KnowMe T6/T7、CloneMem causal/counterfactual相关题准确率。
+  - **Ablation**：
+    1) 仅事件图；2) 事件+情绪；3) 事件+情绪+信念更新（完整图）。
+
+### 方向D：情感协作推理编排（CoEM思想）迁移到个性化记忆任务
+- **研究假设**：将 LongEmotion 的“检索 + 多代理协作”迁移到 AI Clone 问题，可提升高阶洞察题稳定性，尤其在小模型上。
+- **验证路径**：
+  - **Dataset**：LongEmotion（原任务）+ KnowMe Level III。
+  - **Metric**：Overall EI score、KnowMe T6/T7、响应一致性。
+  - **Ablation**：
+    1) Base；2) Vanilla RAG；3) CoEM式协作（替换Sage模型、检索块大小/数量）。
+
+---
+
+## 4) Phase B trigger judgement note
+
+**Judgement**：**建议触发 Phase B（YES）**。
+
+**触发理由（满足至少3条）**
+1. 四文在“检索≠理解”上收敛，但在“如何兼顾保真与效率”上方法分歧明显，值得进入机制级对照实验。  
+2. 已出现可操作的关键矛盾：`O-Mem` 的工程最优 vs `CloneMem/KnowMe` 的证据保真与高阶推理诉求。  
+3. 可立即执行的实验矩阵清晰（见3.2 A/B/C/D），且可复用公开基准。  
+4. 业务相关性高：长期陪伴/个性化助手若无“未决状态”与证据约束，存在稳定性与安全风险。
+
+**Phase B 建议最小实验包（2周）**
+- B1：双轨记忆 vs 单轨（CloneMem + KnowMe）  
+- B2：未决状态门控（含拒答评测）  
+- B3：CoEM迁移到KnowMe Level III  
+- 统一报告：性能（准确/一致性）+ 成本（token/延迟/显存）+ 幻觉率。
+
+---
+
+## 附：关键原文引文（用于可追溯复核）
+
+1. **KnowMe-Bench**：
+   - “retrieval performance an imperfect proxy for person understanding”【Abstract】  
+   - “even with the best memory system, the absolute score remains capped at 22.3% (Dataset 2, MemOS+GPT)”【§5.2】
+
+2. **CloneMem**：
+   - “simple Flat retriever is consistently the most reliable non-oracle baseline”【§7】  
+   - “extracted memories act as a lossy compression…”【§6/§7】  
+   - 数据统计：10 personas、1183 questions（表2）；另文中描述约5000 QA、7/10 persona &gt;500k tokens【§4.1/Table2】
+
+3. **O-Mem**：
+   - “O-Mem achieves 51.67% on the public LoCoMo benchmark… 62.99% on PERSONAMEM”【Abstract】  
+   - “Direct RAG 50.25 vs O-Mem 51.67 F1; 2.6K vs 1.5K tokens; 4.01s vs 2.36s”【Table5】
+
+4. **LongEmotion**：
+   - “average context length of 15,341 tokens”【Abstract】  
+   - CoEM 在多模型提升（如 Qwen3-8B +4.28, DeepSeek-V3 +3.28）【Table2】
+
+&gt; 注：本报告仅基于论文文本提取与对比，不新增任何外部实验；个别数值按文中原表/原句复述。</pre></div>
+<div class="c"><h2>X 热点日报</h2><pre>过去24小时 X(Twitter) AI圈热议日报
+时间窗口（UTC）：2026-02-10 06:05:00 → 2026-02-11 06:05:00
+
+今日热点 Top 5
+1) OpenAI 将 ChatGPT Deep Research 升级为 GPT-5.2
+- 事件：OpenAI 官方宣布 Deep Research 已由 GPT-5.2 驱动，并同步上线多项工作流改进。
+- 热议点：是否代表“研究代理”进入更可用阶段、可中断可追踪的流程是否提升真实生产力。
+- 影响：企业与重度用户的研究型任务门槛进一步降低，工作流竞争加剧。
+- 置信度：高（官方原帖）
+
+2) Claude Cowork 登陆 Windows（功能对齐 macOS）
+- 事件：Claude 官方宣布 Cowork 上线 Windows，覆盖文件访问、多步任务、插件、MCP。
+- 热议点：Windows 用户终于补齐入口；“AI Copilot 平台化”竞争升级。
+- 影响：扩大付费用户覆盖面，推动桌面端 AI 助手渗透。
+- 置信度：高（官方原帖）
+
+3) Anthropic 提前按 ASL-4 门槛推进安全披露
+- 事件：Anthropic 官方称因未来模型接近 ASL-4 阈值，提前按更高安全标准发布评估报告。
+- 热议点：是“超前治理”还是“监管/舆论前置应对”；安全透明度与发布速度如何平衡。
+- 影响：安全框架竞争从“模型能力”扩展到“治理能力”。
+- 置信度：高（官方原帖）
+
+4) ByteDance SeeDance/Seedance 2.0 视频生成刷屏
+- 事件：大量创作者实测，围绕一致性、镜头语言、可用性展开讨论。
+- 热议点：质量提升是否已越过“可商用拐点”；中外模型在视频生成上的差距变化。
+- 影响：AI 视频创作与广告生产链条加速重构。
+- 置信度：中高（多条公开帖交叉印证）
+
+5) Agent + Sandbox 架构讨论升温
+- 事件：开发者集中讨论“Agent in Sandbox”与“Sandbox as Tool”两种范式。
+- 热议点：隔离安全、调试效率、成本与可扩展性的权衡。
+- 影响：将影响下一阶段 Agent 工程默认架构与工具链选型。
+- 置信度：中高（作者原帖+大量转发讨论）
+
+A) 全网AI热点（公开信息，非仅关注列表）
+1) OpenAI：Deep Research in ChatGPT 由 GPT-5.2 驱动，并开始滚动更多改进。来源标注: PUBLIC
+2) Claude：Cowork 现已支持 Windows，强调与 macOS 功能对齐。 （全网+关注共振）来源标注: PUBLIC
+3) Anthropic：就接近 ASL-4 门槛发布安全评估说明，强调提前达标。 （全网+关注共振）来源标注: PUBLIC
+4) SeeDance/Seedance 2.0 引发公开讨论，创作者集中展示“首轮生成质量”。 （全网+关注共振）来源标注: PUBLIC
+5) Agent-Sandbox 两种架构模式成为工程讨论焦点。 （全网+关注共振）来源标注: PUBLIC
+
+B) 我的关注列表帖子（following 时间线）
+1) @sama：&quot;We updated GPT-5.2 (the instant model) in ChatGPT today.&quot;（GPT-5.2 更新）来源标注: FOLLOWING | 关注ID=1605 | @sama
+2) @emollick：&quot;The new ByteDance SeeDance 2.0 video model is VERY good.&quot;（SeeDance 2.0 实测） （全网+关注共振）来源标注: FOLLOWING | 关注ID=39125788 | @emollick
+3) @itsPaulAi：&quot;Anthropic has just released a real Copilot before Microsoft...&quot;（对 Cowork Windows 的扩散解读） （全网+关注共振）来源标注: FOLLOWING | 关注ID=1584941134203289601 | @itsPaulAi
+4) @hwchase17：&quot;The two patterns by which agents connect sandboxes&quot;（Agent-Sandbox 架构讨论） （全网+关注共振）来源标注: FOLLOWING | 关注ID=2728439146 | @hwchase17
+5) @Hesamation：总结 Anthropic 关于 2026 编程工作流变化的要点（工程角色向“编排者”迁移）。 （全网+关注共振）来源标注: FOLLOWING | 关注ID=1836078160653246464 | @Hesamation
+
+争议/分歧观点
+- 关于 GPT-5.2：一派认为“稳定增量、体验变好”；另一派认为“改动不大，提升感知有限”。
+- 关于 Cowork Windows：支持者认为“Windows 用户终于补课”；质疑者认为“功能有了，但生态粘性仍取决于插件/MCP 实际可用性”。
+- 关于 Seedance 2.0：支持者强调“视频质量跃升”；保留意见集中在一致性、人物多样性与可控性。
+
+明日值得关注（1-3条）
+1) OpenAI 是否继续披露 GPT-5.2/Deep Research 的可量化改进指标（速度、成功率、成本）。
+2) Claude Cowork Windows 是否出现更多真实生产场景复盘（企业/开发者案例）。
+3) Seedance 2.0 是否出现更系统化对比评测（与 Kling/Sora 等同题比较）。
+
+信息源链接（优先X原帖）
+- OpenAI（Deep Research + GPT-5.2）：https://x.com/OpenAI/status/2021299935678026168
+- Sam Altman（GPT-5.2 更新）：https://x.com/sama/status/2021452911511998557
+- Claude（Cowork Windows）：https://x.com/claudeai/status/2021336313979625910
+- Anthropic（ASL-4 相关说明）：https://x.com/AnthropicAI/status/2021397952791707696
+- Ethan Mollick（SeeDance 2.0 实测）：https://x.com/emollick/status/2021409874832392508
+- Ethan Mollick（SeeDance 2.0 另一实测）：https://x.com/emollick/status/2021412306291392535
+- Harrison Chase（Agent-Sandbox 两种模式）：https://x.com/hwchase17/status/2021261552222158955
+- Paul Couvert（Cowork 扩散讨论）：https://x.com/itsPaulAi/status/2021343152297345117
+- Hesam（Anthropic 报告二次解读）：https://x.com/Hesamation/status/2021386410427589041</pre></div>
+<div class="c"><a style="color:#8cc4ff" href="./data/latest.json">查看 latest.json</a></div>
+</div></body></html>
