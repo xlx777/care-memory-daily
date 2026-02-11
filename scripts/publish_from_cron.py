@@ -9,7 +9,6 @@ X_JOB_ID = 'c567fd04-4ab1-4c43-8444-09ff75cffc8f'
 
 WORKSPACE = Path('/root/.openclaw/workspace')
 CARE_PROJECT = WORKSPACE / 'brainstorm-multi-model-2026-02-10'
-PAPER_FILE = CARE_PROJECT / 'reports' / 'final_structured_report.md'
 X_FILE = CARE_PROJECT / 'cache' / 'latest_x_report.txt'
 
 
@@ -27,11 +26,8 @@ def latest_summary(job_id: str) -> str:
     return entries[0].get('summary', '')
 
 
-# 论文日报优先读本地完整文件，避免 cron summary 截断
-if PAPER_FILE.exists():
-    paper = PAPER_FILE.read_text(encoding='utf-8', errors='ignore')
-else:
-    paper = latest_summary(PAPER_JOB_ID)
+# 论文日报直接读取论文cron最新产出，避免误读固定研究报告文件
+paper = latest_summary(PAPER_JOB_ID)
 
 # X 日报优先读本地完整文件（由X cron写入），否则降级用summary
 if X_FILE.exists():
