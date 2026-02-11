@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CARE-Memory 日报</title>
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1020;color:#e6ebff;margin:0}
+    .wrap{max-width:980px;margin:32px auto;padding:0 16px}
+    .card{background:#121935;border:1px solid #29325f;border-radius:14px;padding:20px;margin-bottom:16px}
+    h1{font-size:30px;margin:0 0 10px}
+    h2{font-size:20px;margin:0 0 8px}
+    .muted{color:#98a4d6;font-size:14px}
+    pre{white-space:pre-wrap;line-height:1.55;background:#0e1530;border-radius:10px;padding:14px;border:1px solid #24305f}
+    a{color:#8cc4ff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>CARE-Memory 每日网页日报</h1>
+    <p class="muted">自动更新 · 最新时间：<span id="updatedAt">-</span></p>
+
+    <div class="card">
+      <h2>论文精读日报（结构化）</h2>
+      <pre id="paper">加载中...</pre>
+    </div>
+
+    <div class="card">
+      <h2>X 热点日报（文本）</h2>
+      <pre id="xhot">加载中...</pre>
+    </div>
+
+    <div class="card">
+      <h2>项目链接</h2>
+      <p><a href="https://github.com/xlx777/care-memory" target="_blank">care-memory 仓库</a></p>
+    </div>
+  </div>
+<script>
+fetch('./data/latest.json').then(r=>r.json()).then(d=>{
+  document.getElementById('updatedAt').textContent=d.updated_at||'-';
+  document.getElementById('paper').textContent=d.paper_report||'暂无';
+  document.getElementById('xhot').textContent=d.x_report||'暂无';
+}).catch(e=>{
+  document.getElementById('paper').textContent='加载失败';
+  document.getElementById('xhot').textContent=String(e);
+});
+</script>
+</body>
+</html>
