@@ -36,7 +36,7 @@
     </div>
   </div>
 <script>
-fetch('./data/latest.json').then(r=>r.json()).then(d=>{
+fetch('./data/latest.json?t=' + Date.now(), { cache: 'no-store' }).then(r=>r.json()).then(d=>{
   document.getElementById('updatedAt').textContent=d.updated_at||'-';
   document.getElementById('paper').textContent=d.paper_report||'暂无';
   document.getElementById('xhot').textContent=d.x_report||'暂无';
